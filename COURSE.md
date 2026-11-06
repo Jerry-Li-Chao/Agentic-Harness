@@ -21,7 +21,7 @@ Every lesson has the same four parts:
 | **Try it** | Run it and see the new behavior |
 | **Break it** | Change one thing on purpose and predict what happens |
 
-**Project layout:** one file, `agent.js`, until Part 5 gives a reason to split it. Each finished lesson gets a git commit, so `git diff` shows exactly what that lesson added.
+**Project layout:** each lesson has its own folder in `lessons/`, with a complete, runnable copy of the code and a short note. The code stays in one file, `agent.js`, until Part 5 gives a reason to split it. Each finished lesson also gets a git tag, such as `lesson-02`.
 
 **Model:** `gemma4:e2b` by default. It's a small model, so it will sometimes pick the wrong tool or misread a result. That's useful here, because a harness has to cope with those mistakes.
 
@@ -227,4 +227,4 @@ async function main() {
 main();
 ```
 
-Run it with `node agent.js`, and press Ctrl+C to quit.
+Run it with `node lessons/01-one-question/agent.js`, and press Ctrl+C to quit.
