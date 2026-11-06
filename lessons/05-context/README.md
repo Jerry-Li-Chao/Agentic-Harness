@@ -44,6 +44,7 @@ const CONTEXT_LIMIT = 4096;
 ```
 
 - A name for our limit, so that it only has to be set in one place.
+- 128 is very small on purpose, so you reach the limit within a few messages. Real chats use far more, such as 4096 or above.
 
 ```js
       options: { num_ctx: CONTEXT_LIMIT },
@@ -80,28 +81,34 @@ const CONTEXT_LIMIT = 4096;
 
 ## What we saw
 
-With the limit at 4096, the number of tokens read grows every turn, because the whole history is sent again:
+With short messages, the number of tokens read grows every turn, because the whole history is sent again:
 
 ```text
 You: My name is Sam.
-Model: Hi Sam.
-[33 of 4096 tokens: 29 in, 4 out]
-You: What is my name?
-Model: Your name is Sam.
-[53 of 4096 tokens: 47 in, 6 out]
+Model: Hello, Sam.
+[34 of 128 tokens: 29 in, 5 out]
 You: Name one planet.
 Model: Earth.
-[69 of 4096 tokens: 66 in, 3 out]
+[50 of 128 tokens: 47 in, 3 out]
 You: What is my name?
 Model: Your name is Sam.
-[89 of 4096 tokens: 83 in, 6 out]
+[70 of 128 tokens: 64 in, 6 out]
+You: Name one color.
+Model: Blue.
+[86 of 128 tokens: 83 in, 3 out]
+You: Name one fruit.
+Model: Apple.
+[102 of 128 tokens: 99 in, 3 out]
+You: What is my name?
+Model: Your name is Sam.
+[122 of 128 tokens: 116 in, 6 out]
 ```
 
-The "in" numbers grow: 29, 47, 66, 83.
+The "in" numbers grow: 29, 47, 64, 83, 99, 116.
 
 ## What happens at the limit
 
-Here's the same kind of chat with the limit set to 128:
+Long answers get you there much sooner:
 
 ```text
 You: My name is Sam.
@@ -147,15 +154,20 @@ That's why the "in" number fell to 28, the same size as the very first turn, whi
 
 So there are two lists to keep apart: what your program sends, and what the model reads. The "in" number describes the second one. A sudden drop in it is a sign that history was cut.
 
+### Why is the limit 128 in this lesson?
+
+A small limit lets you see the lesson's point within a few messages, without a long chat. It's far too small for real use.
+
 ## Try it
 
-Chat for a few turns and watch the "in" number climb. Ask for something long, then see how much the next turn's "in" number jumps.
+Chat for a few turns and watch the "in" number climb until it reaches the limit. Ask for something long, then see how much the next turn's "in" number jumps.
 
 ## Break it
 
 Try these one at a time, and predict the result first:
 
-1. **Make it forget:** set `CONTEXT_LIMIT` to `128`, say `My name is Sam.`, ask for two long answers, then ask `What is my name?`.
-2. **Print what it can't see:** with the limit at `128`, add `console.log(messages.length);` as the first line of `askModel`. The list keeps growing even as the model forgets.
+1. **Make it forget:** say `My name is Sam.`, ask for two long answers, then ask `What is my name?`.
+2. **Print what it can't see:** add `console.log(messages.length);` as the first line of `askModel`. The list keeps growing even as the model forgets.
+3. **Give it room:** set `CONTEXT_LIMIT` to `4096` and repeat the first exercise. It should remember your name.
 
-Lesson 5 isn't committed yet, so undo your changes by hand for now. Once it's committed, use `git restore lessons/05-context/agent.js` from the main folder, or `git restore agent.js` from this lesson's folder.
+Undo your changes with `git restore lessons/05-context/agent.js` from the main folder, or `git restore agent.js` from this lesson's folder.
