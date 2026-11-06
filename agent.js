@@ -8,17 +8,33 @@ async function askModel(question) {
     body: JSON.stringify({
       model: 'gemma4:e2b',
       messages: [{ role: 'user', content: question }],
-      stream: false,
+      stream: true,
     }),
   });
-  const data = await response.json();
-  return data.message.content;
+
+  // Ollama sends one JSON object per line, but network pieces can split a line in two.
+  // So we hold text in `buffer` until a full line has arrived.
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  for await (const piece of response.body) {
+    buffer += decoder.decode(piece, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop(); // The last item may be an unfinished line, so keep it for later.
+
+    for (const line of lines) {
+      const chunk = JSON.parse(line);
+      process.stdout.write(chunk.message.content);
+    }
+  }
 }
 
 async function main() {
   while (true) {
     const question = await terminal.question('You: ');
-    console.log('Model:', await askModel(question));
+    process.stdout.write('Model: ');
+    await askModel(question);
+    console.log(); // End the reply's line.
   }
 }
 
