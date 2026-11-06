@@ -22,7 +22,7 @@ Every lesson has the same four parts:
 | **Try it** | Run it and see the new behavior |
 | **Break it** | Change one thing on purpose and predict what happens |
 
-**Project layout:** each lesson has its own folder in `lessons/`, with a complete, runnable copy of the code and a short note. The code stays in one file, `agent.js`, until Part 5 gives a reason to split it. Each finished lesson also gets a git tag, such as `lesson-02`.
+**Project layout:** each lesson has its own folder in `lessons/`, with a complete, runnable copy of the code and a short note. The code stays in one file, `agent.js`, until Part 5 gives a reason to split it. Every commit that gets pushed also gets a git tag. A commit that finishes a lesson uses that lesson's tag, such as `lesson-02`, and any later commit uses the next numbered tag, such as `lesson-02.1`, named after the latest finished lesson.
 
 **Model:** `gemma4:e2b` by default. It's a small model, so it will sometimes pick the wrong tool or misread a result. That's useful here, because a harness has to cope with those mistakes.
 
