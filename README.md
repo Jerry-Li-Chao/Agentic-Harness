@@ -10,3 +10,4 @@ Each lesson folder is a complete, runnable copy of the code at that point, with 
 | 2. Streaming | [02-streaming](lessons/02-streaming/README.md) | `lesson-02` |
 | 3. The system prompt | [03-system-prompt](lessons/03-system-prompt/README.md) | `lesson-03` |
 | 4. Conversation memory | [04-memory](lessons/04-memory/README.md) | `lesson-04` |
+| 5. Watching the context fill up | [05-context](lessons/05-context/README.md) | `lesson-05` |

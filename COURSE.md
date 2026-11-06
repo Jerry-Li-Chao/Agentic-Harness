@@ -11,6 +11,7 @@ A hands-on course in how AI agents work. You start with a chat that forgets ever
 - **Small ideas, not small line counts.** Each lesson uses as much readable code as its idea needs. Under about 100 lines is typical, but that's a guide rather than a limit.
 - **Always runnable.** The program works at the end of every lesson.
 - **See it fail first.** You run into each problem before you fix it, so you know why the code exists.
+- **Thinking off.** From Lesson 5 on, the model's built-in thinking stays off (`think: false`), so nothing is hidden from you. Part 7 builds thinking ourselves.
 - **Plain tools.** JavaScript on Node, with your local Ollama and no packages until the final lesson. Nothing is hidden inside a library.
 
 Every lesson has the same four parts:
@@ -189,7 +190,41 @@ Every lesson has the same four parts:
 - **Learn:** evals, and why one good run proves very little.
 - **Try it:** compare `gemma4:e2b` and `qwen3.5:4b` on the same questions.
 
-### Lesson 24: Compare with a framework
+---
+
+## Part 7: Make it think
+
+Thinking is just text the model writes before it answers. This part comes after Lesson 23, so you can measure whether each step actually helps.
+
+### Lesson 24: Thinking out loud
+- **Problem:** with built-in thinking off, the model jumps straight to an answer and makes mistakes on multi-step questions.
+- **Build:** a system prompt that asks for reasoning inside `<think>` tags before the answer.
+- **Learn:** thinking isn't a special feature. It's more text, and it costs tokens.
+- **Break it:** ask it to answer first and reason afterward, then compare the scores.
+
+### Lesson 25: Keeping thoughts private
+- **Problem:** the reasoning shows up in the reply and fills the history.
+- **Build:** split the stream into thinking and answer, show them differently, and save only the answer.
+- **Learn:** the harness decides what gets seen and what gets remembered.
+- **Break it:** let a `<think>` tag split across two network pieces. (It's the Lesson 2 buffer problem again.)
+
+### Lesson 26: Plan first, then answer
+- **Problem:** one instruction can't guarantee that the model reasons before it answers.
+- **Build:** two model calls: one writes a plan, and the next answers using that plan.
+- **Learn:** code can force a step that a prompt can only request.
+- **Try it:** compare the score and the time taken against Lesson 24.
+
+### Lesson 27: Thinking inside the loop
+- **Problem:** the agent acts on tool results without stopping to judge them.
+- **Build:** a reflection step after each tool result: is this enough, and what's next? Then a final check of the answer, with one retry.
+- **Learn:** more thinking costs time and tokens, so keep only what raises the score.
+- **Break it:** make a tool return a wrong result and see whether reflection catches it.
+
+---
+
+## Part 8: Compare
+
+### Lesson 28: Compare with a framework
 - **Problem:** what do frameworks give you, and what do they hide?
 - **Build:** rebuild the agent in LangGraph or the Vercel AI SDK. Check their current docs first, since these libraries change quickly.
 - **Learn:** you can now read a framework as the same loop you already wrote, and decide when one is worth using.
