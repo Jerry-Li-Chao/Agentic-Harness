@@ -292,6 +292,25 @@ To print the output straight into the terminal without opening the viewer, put `
 git --no-pager diff --no-index lessons/01-one-question/agent.js lessons/02-streaming/agent.js
 ```
 
+### If we split on the newline and `split` removes it, how do line breaks in the model's reply survive?
+
+You're right that `split` removes the delimiter, but it never sees the line breaks in the reply. JSON doesn't allow a real line break inside a string, so a line break in the reply is written as two ordinary characters: a backslash and an `n`.
+
+```text
+{"content":"one\ntwo"}      ← the \n here is a backslash and an n, not a real line break
+```
+
+So there are two kinds of newline in the stream:
+
+| What | Where | What happens to it |
+|---|---|---|
+| Real line break | Between JSON objects | `split('\n')` removes it, and it was only a separator |
+| Backslash and `n` | Inside the reply text | `split` ignores it, and `JSON.parse` turns it into a real line break |
+
+Each line therefore always holds one complete JSON object, however many line breaks the reply contains. `process.stdout.write` then prints the real line break that `JSON.parse` produced.
+
+In JavaScript code, `'\n'` means a real line break, which is why `split('\n')` doesn't match the backslash and `n` in the stream.
+
 ## Try it
 
 Ask for a few sentences and watch them appear piece by piece. There's still a pause first, because `gemma4:e2b` thinks by default and this code only prints `content`.
