@@ -38,7 +38,7 @@ JavaScript was created to run inside web browsers. A file of JavaScript can't ru
 ### Why this combination?
 
 - **It needs little setup.** Node already includes what this lesson uses, so there's nothing else to install.
-- **It carries over to later lessons.** Web pages use JavaScript too, so the same language works when we build the browser timeline in Lesson 20.
+- **It carries over to later lessons.** Web pages use JavaScript too, so the same language works when we build the browser timeline in Lesson 23.
 - **It matches your chat app.** That project is JavaScript on Node as well.
 
 Python would have worked just as well. The ideas in this course aren't tied to any one language.

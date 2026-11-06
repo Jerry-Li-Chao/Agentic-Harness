@@ -256,7 +256,7 @@ Three similar-looking things are easy to mix up:
 
 This lesson's code doesn't read `"done": true`. The loop ends because the response itself ends.
 
-If a connection stays open but stops sending, the loop keeps waiting, because nothing has told it the response is over. Lesson 21 adds timeouts for this.
+If a connection stays open but stops sending, the loop keeps waiting, because nothing has told it the response is over. Lesson 24 adds timeouts for this.
 
 ### If we always pop the last item, won't we drop something when we reach the end?
 

@@ -72,7 +72,19 @@ Every lesson has the same four parts:
 - **Learn:** you decide what the model remembers.
 - **Break it:** drop the system prompt as well and watch the behavior change.
 
-### Lesson 7: Why agents get slow
+### Lesson 7: Summaries
+- **Problem:** Lesson 6 throws away old messages, even the ones that matter.
+- **Build:** ask the model to summarize the oldest messages, then replace them with that summary.
+- **Learn:** compaction. Memory can be rewritten as well as deleted, and the summary is written by the model, so it can leave things out.
+- **Break it:** ask it to summarize in five words, then ask for a detail it dropped.
+
+### Lesson 8: Compacting automatically
+- **Problem:** you shouldn't have to decide when to summarize.
+- **Build:** use the token count from Lesson 5 to compact when the context passes a threshold, keeping the newest messages word for word.
+- **Learn:** compact before you hit the limit, because writing the summary needs room too.
+- **Break it:** set the threshold so low that it compacts every turn, and watch the time and the quality.
+
+### Lesson 9: Why agents get slow
 - **Problem:** the same question can take a fraction of a second or a minute.
 - **Build:** print prompt time per turn, then change the system prompt mid-chat.
 - **Learn:** prompt caching only helps when the start of the prompt stays the same.
@@ -82,37 +94,37 @@ Every lesson has the same four parts:
 
 ## Part 3: Give it hands
 
-### Lesson 8: The model asks for a tool
+### Lesson 10: The model asks for a tool
 - **Problem:** the model can't do anything except produce text.
 - **Build:** describe one `get_time` tool and print what the model requests.
 - **Learn:** the model never runs anything. It only asks.
 - **Break it:** ask something unrelated and see that it doesn't ask for the tool.
 
-### Lesson 9: Run the tool, send back the result
+### Lesson 11: Run the tool, send back the result
 - **Problem:** the model asked, and nothing happened.
 - **Build:** run the tool, add a `tool` message, call the model again.
 - **Learn:** a tool call is two model calls with your code in between.
 - **Break it:** return a wrong time and see the model repeat it confidently.
 
-### Lesson 10: The loop
+### Lesson 12: The loop
 - **Problem:** what if it needs a second tool call after seeing the first result?
-- **Build:** turn Lesson 9 into a `while` loop that ends when no tool is requested.
+- **Build:** turn Lesson 11 into a `while` loop that ends when no tool is requested.
 - **Learn:** this loop is the agent. "Decide if it's done" is simply the model choosing not to call a tool.
 - **Try it:** ask a question that needs two tool calls.
 
-### Lesson 11: A tool registry
+### Lesson 13: A tool registry
 - **Problem:** adding tools shouldn't mean editing the loop.
 - **Build:** a `tools` list of name, description, parameters and function, plus a `calculate` tool.
 - **Learn:** tool descriptions are prompts, and the model picks tools by reading them.
 - **Break it:** write a vague description and watch tool choice get worse.
 
-### Lesson 12: When the model gets it wrong
+### Lesson 14: When the model gets it wrong
 - **Problem:** unknown tools, bad arguments and tools that throw errors crash the program.
 - **Build:** catch them and send the error back as the tool result.
 - **Learn:** errors are information the model can act on.
 - **Break it:** make a tool always fail and watch how the model responds.
 
-### Lesson 13: Stopping a runaway
+### Lesson 15: Stopping a runaway
 - **Problem:** the loop could run forever.
 - **Build:** a step limit, a block on repeated identical calls, and one last turn with no tools.
 - **Learn:** the harness holds the final say over the loop.
@@ -122,69 +134,75 @@ Every lesson has the same four parts:
 
 ## Part 4: Reach the web
 
-### Lesson 14: `web_search`
+### Lesson 16: `web_search`
 - **Problem:** the model's knowledge stops at its training date.
 - **Build:** search and return titles, links and snippets.
 - **Learn:** a real tool is just a function that returns text.
 - **Try it:** ask about something recent and see the citations.
 
-### Lesson 15: `fetch_page`
+### Lesson 17: `fetch_page`
 - **Problem:** snippets rarely hold the actual answer.
 - **Build:** let the model open a chosen page, with its text cut to a size limit.
 - **Learn:** tool output spends context, so size limits matter.
 - **Break it:** remove the limit, open a huge page and watch the context overflow.
 
-### Lesson 16: Why it says "I don't know"
+### Lesson 18: Why it says "I don't know"
 - **Problem:** you ask for a stock price and it tells you to go check a website. (We hit this exact bug.)
 - **Build:** print what the model actually received, then make a tool that returns labeled fields.
 - **Learn:** debug the input first. Clean, structured results beat scraped text.
 - **Break it:** return unlabeled numbers and see if it misreads them.
 
-### Lesson 17: Untrusted content
+### Lesson 19: Untrusted content
 - **Problem:** a web page can include text like "ignore your instructions".
 - **Build:** a local test page containing an injection, then mark tool results as data in the system prompt.
 - **Learn:** prompt injection, and why instructions alone are not a security boundary. The real defense is limiting what tools can do.
 - **Break it:** see whether the model obeys the page. Sometimes it will.
 
+### Lesson 20: Compacting a long agent run
+- **Problem:** tool results fill the context quickly, and an agent can lose track of its goal partway through a task.
+- **Build:** shrink old tool results first, then summarize, and always keep the original request and a record of progress.
+- **Learn:** an agent's history needs different treatment from a chat, because some parts are cheap to fetch again and some can't be lost.
+- **Break it:** drop the original request during compaction and watch the agent drift.
+
 ---
 
 ## Part 5: See inside it
 
-### Lesson 18: Events
+### Lesson 21: Events
 - **Problem:** `console.log` is scattered through the loop.
 - **Build:** one `emit(event)` function for each step, and split out `loop.js`.
 - **Learn:** separating what happened from how it's displayed.
 - **Try it:** print the same run as readable text, then as raw JSON.
 
-### Lesson 19: Run logs
+### Lesson 22: Run logs
 - **Problem:** when a run goes wrong, the evidence is gone.
 - **Build:** save events to a file and replay them.
 - **Learn:** agents are hard to debug without a record of what happened.
 - **Try it:** replay a failed run without calling the model.
 
-### Lesson 20: A live timeline in the browser
+### Lesson 23: A live timeline in the browser
 - **Problem:** you want to watch each step: thinking, tool calls, results, decisions.
 - **Build:** a small Node server that streams events to one web page.
-- **Learn:** the loop doesn't change at all, which is the payoff from Lesson 18.
+- **Learn:** the loop doesn't change at all, which is the payoff from Lesson 21.
 - **Try it:** watch a two-search question unfold live.
 
 ---
 
 ## Part 6: Make it dependable
 
-### Lesson 21: Stop and timeouts
+### Lesson 24: Stop and timeouts
 - **Problem:** a stuck tool or a long reply can't be stopped.
 - **Build:** pass an `AbortSignal` through the model call and the tools.
 - **Learn:** cancellation has to reach every layer.
 - **Break it:** run a tool with a blocking `while` loop. The timeout can't fire. (A regex froze our server this way.)
 
-### Lesson 22: Testing with a fake model
+### Lesson 25: Testing with a fake model
 - **Problem:** real models are slow and give different answers each run.
 - **Build:** swap in a scripted fake model and test the loop with `node --test`.
 - **Learn:** the harness can be tested without AI if the model call is passed in.
 - **Try it:** write tests for the step limit and for tool errors.
 
-### Lesson 23: Measuring the agent
+### Lesson 26: Measuring the agent
 - **Problem:** did your last prompt change help or hurt?
 - **Build:** a handful of questions with expected answers, and a score across runs.
 - **Learn:** evals, and why one good run proves very little.
@@ -194,27 +212,27 @@ Every lesson has the same four parts:
 
 ## Part 7: Make it think
 
-Thinking is just text the model writes before it answers. This part comes after Lesson 23, so you can measure whether each step actually helps.
+Thinking is just text the model writes before it answers. This part comes after Lesson 26, so you can measure whether each step actually helps.
 
-### Lesson 24: Thinking out loud
+### Lesson 27: Thinking out loud
 - **Problem:** with built-in thinking off, the model jumps straight to an answer and makes mistakes on multi-step questions.
 - **Build:** a system prompt that asks for reasoning inside `<think>` tags before the answer.
 - **Learn:** thinking isn't a special feature. It's more text, and it costs tokens.
 - **Break it:** ask it to answer first and reason afterward, then compare the scores.
 
-### Lesson 25: Keeping thoughts private
+### Lesson 28: Keeping thoughts private
 - **Problem:** the reasoning shows up in the reply and fills the history.
 - **Build:** split the stream into thinking and answer, show them differently, and save only the answer.
 - **Learn:** the harness decides what gets seen and what gets remembered.
 - **Break it:** let a `<think>` tag split across two network pieces. (It's the Lesson 2 buffer problem again.)
 
-### Lesson 26: Plan first, then answer
+### Lesson 29: Plan first, then answer
 - **Problem:** one instruction can't guarantee that the model reasons before it answers.
 - **Build:** two model calls: one writes a plan, and the next answers using that plan.
 - **Learn:** code can force a step that a prompt can only request.
-- **Try it:** compare the score and the time taken against Lesson 24.
+- **Try it:** compare the score and the time taken against Lesson 27.
 
-### Lesson 27: Thinking inside the loop
+### Lesson 30: Thinking inside the loop
 - **Problem:** the agent acts on tool results without stopping to judge them.
 - **Build:** a reflection step after each tool result: is this enough, and what's next? Then a final check of the answer, with one retry.
 - **Learn:** more thinking costs time and tokens, so keep only what raises the score.
@@ -224,7 +242,7 @@ Thinking is just text the model writes before it answers. This part comes after 
 
 ## Part 8: Compare
 
-### Lesson 28: Compare with a framework
+### Lesson 31: Compare with a framework
 - **Problem:** what do frameworks give you, and what do they hide?
 - **Build:** rebuild the agent in LangGraph or the Vercel AI SDK. Check their current docs first, since these libraries change quickly.
 - **Learn:** you can now read a framework as the same loop you already wrote, and decide when one is worth using.

@@ -64,7 +64,7 @@ There's no separate channel for instructions. Before the model runs, Ollama join
 
 So the system prompt is **just more text**. Nothing checks that the model follows it. Models are trained to give it a lot of weight, so it usually works, but "usually" is the best you get. No code in this program enforces it.
 
-The harness is different. Something written in code, such as a limit on a loop, happens every time. Lesson 13 uses this to stop runaway agents, and Lesson 17 shows why it matters for safety.
+The harness is different. Something written in code, such as a limit on a loop, happens every time. Lesson 15 uses this to stop runaway agents, and Lesson 19 shows why it matters for safety.
 
 ## Questions from the course
 
@@ -82,7 +82,7 @@ We tested this with `Always answer in one word.` and `Write 3 full sentences abo
 - **The rule can be beaten:** the same request obeyed the rule on some runs and broke it on others.
 - **Swapping does change the input:** the token count went from 37 to 42, so the model received different text. In this small test, the behavior came out about the same, but the larger test in the next question shows a real difference.
 
-Five runs is too few to measure a small difference. Lesson 23 builds a proper way to score this over many runs.
+Five runs is too few to measure a small difference. Lesson 26 builds a proper way to score this over many runs.
 
 ### Why couldn't I break the system prompt even once when the test above did? And should the order of the messages matter?
 
